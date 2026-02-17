@@ -1,41 +1,89 @@
 {% load static %}
-<html>
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
 
 <head>
-  <title>Django blog</title>
-  <link href="https://fonts.googleapis.com/css?family=\
-      Source+Sans+Pro:400" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Django Blog{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="{% static 'css/base.css' %}" rel="stylesheet">
+  <link href="{% static 'css/new_css.css' %}" rel="stylesheet">
 </head>
 
-<body>
-  <div>
-    <header>
-     
-      <div class="nav-left">
-        <h1><a href="{% url 'home' %}">Django blog</a></h1>
+<body style="min-height: 100vh; display: flex; flex-direction: column; padding-top: var(--topnav-height);">
+  <!-- Top Navigation -->
+  <nav data-topnav>
+    <div class="hstack" style="flex: 1;">
+      <h1 style="margin: 0; font-size: var(--text-4);">
+        <a href="{% url 'home' %}" style="text-decoration: none; color: var(--foreground);">
+          📝 Django Blog
+        </a>
+      </h1>
+    </div>
+    
+    <div class="hstack gap-2">
+      {% if user.is_authenticated %}
+        <span class="badge">👋 {{ user.username }}</span>
+        <a href="{% url 'post_new' %}" class="button" data-variant="secondary">
+          ✨ New Post
+        </a>
+        <form action="{% url 'logout' %}" method="post" style="margin: 0;">
+          {% csrf_token %}
+          <button type="submit" class="button ghost small">Log Out</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="button outline small">Log In</a>
+        <a href="{% url 'signup' %}" class="button small">Sign Up</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main class="container" style="flex: 1; padding-top: var(--space-8); padding-bottom: var(--space-12);">
+    {% if not user.is_authenticated %}
+    <div role="alert" data-variant="warning" style="margin-bottom: var(--space-6);">
+      <div>
+        <strong>Welcome, Guest!</strong>
+        <p style="margin: var(--space-1) 0 0 0; font-size: var(--text-7);">
+          You are not logged in. Please <a href="{% url 'login' %}">log in</a> or <a href="{% url 'signup' %}">sign up</a> to create posts.
+        </p>
       </div>
-      <div class="nav-right">
-        <a href="{% url 'post_new' %}">+ New Blog Post</a>
-      </div>
-      
-    </header>
-   
-    {% if user.is_authenticated %}
-    <p>Hi {{ user.username }}!</p>
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Log Out</button>
-      </form>
-    {% else %}
-    <p>You are not logged in.</p>
-    <a href="{% url 'login' %}">Log In</a> |
-    <a href="{% url 'signup' %}">Sign Up</a>
+    </div>
     {% endif %}
- 
+    
     {% block content %}
     {% endblock content %}
-  </div>
+  </main>
+
+  <!-- Footer -->
+  <footer style="background-color: var(--muted); border-top: 1px solid var(--border); padding: var(--space-8) 0; margin-top: auto;">
+    <div class="container">
+      <div class="text-center text-light">
+        <p style="margin: 0; font-size: var(--text-7);">
+          © 2026 Django Blog. Built with Django & Modern CSS.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'css/newjs.js' %}"></script>
+  
+  <!-- Theme Toggle Script -->
+  <script>
+    // Optional: Add theme toggle functionality
+    const toggleTheme = () => {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    };
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  </script>
 </body>
 
 </html>

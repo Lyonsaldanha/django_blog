@@ -1,9 +1,75 @@
+<!-- templates/registration/signup.html -->
 {% extends "base.html" %}
 
+{% block title %}Sign Up - Django Blog{% endblock %}
+
 {% block content %}
-<h2>Sign Up</h2>
-<form method="post">{% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Sign Up</button>
-</form>
+<div style="max-width: 450px; margin: 0 auto;">
+  <div class="card" style="padding: var(--space-8);">
+    <div style="text-align: center; margin-bottom: var(--space-8);">
+      <div style="font-size: 3rem; margin-bottom: var(--space-4);">✨</div>
+      <h1 style="margin: 0 0 var(--space-2) 0;">Create Account</h1>
+      <p class="text-light" style="margin: 0;">
+        Join our community and start blogging today
+      </p>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      
+      {% for field in form %}
+      <div data-field style="margin-bottom: var(--space-5);">
+        <label for="{{ field.id_for_label }}" style="margin-bottom: var(--space-2);">
+          {{ field.label }}
+          {% if field.field.required %}
+          <span style="color: var(--danger);">*</span>
+          {% endif %}
+        </label>
+        
+        {% if 'password' in field.name %}
+        <input 
+          type="password" 
+          name="{{ field.name }}" 
+          id="{{ field.id_for_label }}"
+          {% if field.field.required %}required{% endif %}
+          placeholder="Enter {{ field.label|lower }}">
+        {% else %}
+        <input 
+          type="text" 
+          name="{{ field.name }}" 
+          id="{{ field.id_for_label }}"
+          value="{{ field.value|default:'' }}"
+          {% if field.field.required %}required{% endif %}
+          placeholder="Enter your {{ field.label|lower }}">
+        {% endif %}
+        
+        {% if field.help_text %}
+        <span data-hint style="display: block; margin-top: var(--space-1);">{{ field.help_text }}</span>
+        {% endif %}
+        
+        {% if field.errors %}
+        <span class="error">{{ field.errors.0 }}</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      {% if form.non_field_errors %}
+      <div role="alert" data-variant="danger" style="margin-bottom: var(--space-4);">
+        {{ form.non_field_errors }}
+      </div>
+      {% endif %}
+
+      <button type="submit" class="button" style="width: 100%; margin-top: var(--space-4);">
+        🎉 Create Account
+      </button>
+    </form>
+
+    <hr style="margin: var(--space-6) 0;">
+
+    <p style="text-align: center; margin: 0; font-size: var(--text-7); color: var(--muted-foreground);">
+      Already have an account? 
+      <a href="{% url 'login' %}" style="font-weight: var(--font-medium);">Log in</a>
+    </p>
+  </div>
+</div>
 {% endblock content %}

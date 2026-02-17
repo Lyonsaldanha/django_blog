@@ -1,10 +1,71 @@
 <!-- templates/post_edit.html -->
 {% extends "base.html" %}
 
+{% block title %}Edit Post - Django Blog{% endblock %}
+
 {% block content %}
-<h1>Edit post</h1>
-<form action="" method="post">{% csrf_token %}
-  {{ form }}
-  <input type="submit" value="Update">
-</form>
+<div style="max-width: 700px; margin: 0 auto;">
+  <!-- Header -->
+  <div style="margin-bottom: var(--space-6);">
+    <a href="{% url 'post_detail' post.pk %}" class="button ghost small">
+      ← Back to Post
+    </a>
+  </div>
+
+  <div class="card" style="padding: var(--space-8);">
+    <h1 style="margin-top: 0; margin-bottom: var(--space-2);">✏️ Edit Post</h1>
+    <p class="text-light" style="margin-bottom: var(--space-8);">
+      Update your blog post details below.
+    </p>
+
+    <form action="" method="post">
+      {% csrf_token %}
+      
+      {% for field in form %}
+      <div data-field style="margin-bottom: var(--space-6);">
+        <label for="{{ field.id_for_label }}" style="margin-bottom: var(--space-2);">
+          {{ field.label }}
+          {% if field.field.required %}
+          <span style="color: var(--danger);">*</span>
+          {% endif %}
+        </label>
+        
+        {% if field.name == 'body' %}
+        <textarea 
+          name="{{ field.name }}" 
+          id="{{ field.id_for_label }}"
+          {% if field.field.required %}required{% endif %}
+          placeholder="Write your post content here..."
+          style="min-height: 200px;">{{ field.value|default:'' }}</textarea>
+        {% else %}
+        <input 
+          type="text" 
+          name="{{ field.name }}" 
+          id="{{ field.id_for_label }}"
+          value="{{ field.value|default:'' }}"
+          {% if field.field.required %}required{% endif %}
+          placeholder="Enter {{ field.label|lower }}">
+        {% endif %}
+        
+        {% if field.help_text %}
+        <span data-hint>{{ field.help_text }}</span>
+        {% endif %}
+        
+        {% if field.errors %}
+        <span class="error">{{ field.errors.0 }}</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      <div class="hstack gap-2" style="justify-content: flex-end; margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--border);">
+        <a href="{% url 'post_detail' post.pk %}" class="button outline">
+          Cancel
+        </a>
+        <button type="submit" class="button">
+          💾 Update Post
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock content %}

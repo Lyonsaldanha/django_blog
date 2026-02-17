@@ -1,10 +1,53 @@
 <!-- templates/post_delete.html -->
 {% extends "base.html" %}
 
+{% block title %}Delete Post - Django Blog{% endblock %}
+
 {% block content %}
-<h1>Delete post</h1>
-<form action="" method="post">{% csrf_token %}
-  <p>Are you sure you want to delete "{{ post.title }}"?</p>
-  <input type="submit" value="Confirm">
-</form>
+<div style="max-width: 600px; margin: 0 auto;">
+  <!-- Header -->
+  <div style="margin-bottom: var(--space-6);">
+    <a href="{% url 'post_detail' post.pk %}" class="button ghost small">
+      ← Back to Post
+    </a>
+  </div>
+
+  <div class="card" style="padding: var(--space-8); border: 2px solid var(--danger);">
+    <div style="text-align: center; margin-bottom: var(--space-6);">
+      <div style="font-size: 3rem; margin-bottom: var(--space-4);">⚠️</div>
+      <h1 style="margin: 0 0 var(--space-4) 0; color: var(--danger);">Delete Post</h1>
+    </div>
+
+    <div role="alert" data-variant="danger" style="margin-bottom: var(--space-6);">
+      <div>
+        <strong>Warning!</strong>
+        <p style="margin: var(--space-1) 0 0 0; font-size: var(--text-7);">
+          This action cannot be undone. The post will be permanently deleted.
+        </p>
+      </div>
+    </div>
+
+    <div style="background-color: var(--muted); padding: var(--space-4); border-radius: var(--radius-medium); margin-bottom: var(--space-8);">
+      <p style="margin: 0; font-size: var(--text-7); color: var(--muted-foreground);">
+        You are about to delete:
+      </p>
+      <p style="margin: var(--space-2) 0 0 0; font-weight: var(--font-semibold); font-size: var(--text-5);">
+        "{{ post.title }}"
+      </p>
+    </div>
+
+    <form action="" method="post">
+      {% csrf_token %}
+      
+      <div class="hstack gap-2" style="justify-content: center;">
+        <a href="{% url 'post_detail' post.pk %}" class="button outline">
+          Cancel
+        </a>
+        <button type="submit" class="button" data-variant="danger">
+          🗑️ Confirm Delete
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock content %}

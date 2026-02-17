@@ -1,13 +1,64 @@
 <!-- templates/post_detail.html -->
 {% extends "base.html" %}
 
+{% block title %}{{ object.title }} - Django Blog{% endblock %}
+
 {% block content %}
-<div class="post-entry">
- <h2>{{ object.title }}</h2>
- <p>{{ object.body }}</p>
-</div>
-<div>
-<p><a href="{% url 'post_edit' post.pk %}">+ Edit Blog Post</a></p>
-<p><a href="{% url 'post_delete' post.pk %}">+ Delete Blog Post</a></p> 
+<div style="max-width: 800px; margin: 0 auto;">
+  <!-- Back Navigation -->
+  <div style="margin-bottom: var(--space-6);">
+    <a href="{% url 'home' %}" class="button ghost small">
+      ← Back to All Posts
+    </a>
+  </div>
+
+  <!-- Post Content Card -->
+  <article class="card" style="padding: var(--space-8);">
+    <header style="margin-bottom: var(--space-6); padding-bottom: var(--space-6); border-bottom: 1px solid var(--border);">
+      <h1 style="margin-bottom: var(--space-4);">{{ object.title }}</h1>
+      
+      <div class="hstack gap-2" style="flex-wrap: wrap;">
+        {% if object.author %}
+        <span class="badge">
+          👤 {{ object.author }}
+        </span>
+        {% endif %}
+        
+        {% if object.created_at %}
+        <span class="badge secondary">
+          📅 {{ object.created_at|date:"F d, Y" }}
+        </span>
+        {% endif %}
+        
+        {% if object.updated_at and object.updated_at != object.created_at %}
+        <span class="badge outline" style="font-size: var(--text-8);">
+          Updated: {{ object.updated_at|date:"M d, Y" }}
+        </span>
+        {% endif %}
+      </div>
+    </header>
+    
+    <div style="font-size: var(--text-5); line-height: 1.8; color: var(--foreground);">
+      {{ object.body|linebreaks }}
+    </div>
+  </article>
+
+  <!-- Action Buttons -->
+  {% if user.is_authenticated %}
+  <div class="card" style="margin-top: var(--space-6); padding: var(--space-6);">
+    <h3 style="margin-top: 0; margin-bottom: var(--space-4); font-size: var(--text-5);">
+      ⚙️ Post Actions
+    </h3>
+    
+    <menu class="buttons" style="list-style: none; margin: 0; padding: 0;">
+      <a href="{% url 'post_edit' post.pk %}" class="button" data-variant="secondary">
+        ✏️ Edit Post
+      </a>
+      <a href="{% url 'post_delete' post.pk %}" class="button" data-variant="danger">
+        🗑️ Delete Post
+      </a>
+    </menu>
+  </div>
+  {% endif %}
 </div>
 {% endblock content %}

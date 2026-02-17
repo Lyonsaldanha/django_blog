@@ -1,12 +1,67 @@
 {% extends "base.html" %}
 
-{% block content %}
-{%for post in posts%}
+{% block title %}Home - Django Blog{% endblock %}
 
-<div class="post-entry">
-<h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
- <p>Author: {{ post.author }}</a>
- <p>{{ post.body }}</p>
+{% block content %}
+<div class="vstack gap-4" style="margin-bottom: var(--space-6);">
+  <div class="hstack" style="justify-content: space-between; align-items: center;">
+    <h1 style="margin: 0;">✍️ Latest Posts</h1>
+    {% if user.is_authenticated %}
+    <a href="{% url 'post_new' %}" class="button" data-variant="secondary">
+      + Create New Post
+    </a>
+    {% endif %}
+  </div>
+  <hr style="margin: 0;">
 </div>
-{% endfor %}
+
+{% if posts %}
+<div class="row" style="gap: var(--space-6);">
+  {% for post in posts %}
+  <div class="col-12 col-md-6">
+    <article class="card" style="height: 100%; display: flex; flex-direction: column; transition: transform var(--transition-fast), box-shadow var(--transition-fast);" 
+             onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-large)';" 
+             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-small)';">
+      
+      <div style="flex: 1;">
+        <h2 style="margin-top: 0;">
+          <a href="{{ post.get_absolute_url }}" style="text-decoration: none; color: var(--foreground);">
+            {{ post.title }}
+          </a>
+        </h2>
+        
+        <p class="text-light" style="font-size: var(--text-7); margin-bottom: var(--space-4);">
+          {% if post.author %}
+          By <span class="badge secondary">{{ post.author }}</span>
+          {% endif %}
+          {% if post.created_at %}
+          • {{ post.created_at|date:"M d, Y" }}
+          {% endif %}
+        </p>
+        
+        <p style="color: var(--muted-foreground); line-height: 1.6;">
+          {{ post.body|truncatewords:30 }}
+        </p>
+      </div>
+      
+      <div style="margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--border);">
+        <a href="{{ post.get_absolute_url }}" class="button outline small" style="width: 100%;">
+          Read More →
+        </a>
+      </div>
+    </article>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card text-center" style="padding: var(--space-12);">
+  <h3>📭 No Posts Yet</h3>
+  <p class="text-light">Be the first to create a post!</p>
+  {% if user.is_authenticated %}
+  <a href="{% url 'post_new' %}" class="button" style="margin-top: var(--space-4);">
+    Create Your First Post
+  </a>
+  {% endif %}
+</div>
+{% endif %}
 {% endblock content %}
