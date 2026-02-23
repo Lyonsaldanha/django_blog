@@ -47,19 +47,20 @@ class BlogTests(TestCase):
         self.assertTemplateUsed(response, "post_detail.html")
     
     def test_post_createview(self):
+        self.client.login(username="testuser", password="secret")
         response = self.client.post(
             reverse("post_new"),
             {
                 "title": "New title",
                 "body": "New text",
-                "author": self.user.id,
             },
         )
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(Post.objects.last().title, "New title")
-        self.assertEqual(Post.objects.last().body, "New text")
+        self.assertEqual(Post.objects.first().title, "New title")
+        self.assertEqual(Post.objects.first().body, "New text")
 
     def test_post_updateview(self):
+        self.client.login(username="testuser", password="secret")
         response = self.client.post(
             reverse("post_edit", args="1"),
             {
@@ -68,9 +69,10 @@ class BlogTests(TestCase):
             },
         )
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(Post.objects.last().title, "Updated title")
-        self.assertEqual(Post.objects.last().body, "Updated text")
+        self.assertEqual(Post.objects.first().title, "Updated title")
+        self.assertEqual(Post.objects.first().body, "Updated text")
 
     def test_post_deleteview(self):
+        self.client.login(username="testuser", password="secret")
         response = self.client.post(reverse("post_delete", args="1"))
         self.assertEqual(response.status_code, 302)

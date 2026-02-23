@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView,UpdateView,DeleteView
 from .models import Post
@@ -14,25 +15,25 @@ class BlogDetailView(DetailView):
     model = Post
     template_name = "post_detail.html"
     
-class BlogCreateView(CreateView):  # new
+class BlogCreateView(LoginRequiredMixin, CreateView):  # new
     model = Post
     template_name = "post_new.html"
     fields = ["title", "body"]  # Removed 'author' - will be set automatically
     success_url = reverse_lazy("home")
     
     def form_valid(self, form):
-        # Automatically set the author to the logged-in user
+        
         form.instance.author = self.request.user
         return super().form_valid(form)
 
 
     
-class BlogUpdateView(UpdateView):
+class BlogUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
     template_name = "post_edit.html"
     fields =  ['title','body']
 
-class BlogDeleteView(DeleteView):  # new
+class BlogDeleteView(LoginRequiredMixin, DeleteView):  # new
     model = Post
     template_name = "post_delete.html"
     success_url = reverse_lazy("home")
